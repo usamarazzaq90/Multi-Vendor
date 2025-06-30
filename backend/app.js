@@ -10,7 +10,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS configuration
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Your frontend URL
+    credentials: true,
+  })
+);
 // app.use(cors({
 // origin: "http://localhost:3000", // Your frontend URL
 // credentials: true,
