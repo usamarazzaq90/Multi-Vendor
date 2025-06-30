@@ -1,11 +1,11 @@
 import { React, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
-// import axios from "axios";
-// import { server } from "../../server";
-// import { toast } from "react-toastify";
+import axios from "axios";
+import { server } from "../../server";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +13,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -30,9 +31,36 @@ const Signup = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log("ffff");
+    e.preventDefault();
 
-    //   e.preventDefault();
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      // withCredentials: true,
+    };
+
+    const newForm = new FormData();
+    newForm.append("file", avatar);
+    newForm.append("name", name);
+    newForm.append("email", email);
+    newForm.append("password", password);
+
+    axios
+      .post(`${server}/user/create-user`, newForm, config)
+      .then((res) => {
+        console.log(res);
+        toast.success(res.data.message);
+        // alert(res.message);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setAvatar();
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+        // console.log("ssssss");
+      });
 
     //   axios
     //     .post(`${server}/user/create-user`, { name, email, password, avatar })
